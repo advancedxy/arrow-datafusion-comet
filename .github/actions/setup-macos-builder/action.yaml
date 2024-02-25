@@ -54,7 +54,6 @@ runs:
         brew install openssl
         OPENSSL_LIB_PATH=`brew --prefix openssl`/lib
         echo "openssl lib path is: ${OPENSSL_LIB_PATH}"
-        export DYLD_FALLBACK_LIBRARY_PATH=$OPENSSL_LIB_PATH:/usr/local/lib:/usr/lib
 
     - name: Install JDK ${{inputs.jdk-version}}
       uses: actions/setup-java@v4
