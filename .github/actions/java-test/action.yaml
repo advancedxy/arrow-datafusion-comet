@@ -52,7 +52,8 @@ runs:
           export DYLD_LIBRARY_PATH=`brew --prefix openssl`/lib:$DYLD_LIBRARY_PATH
           # check SIP is enabled or not
           echo "check dyld_xxx envs are loaded or not:"
-          sh -c "printenv" | grep -i dyld
+          csrutil status || true
+          sh -c "printenv" | grep -i dyld || true
           SPARK_HOME=`pwd` DYLD_PRINT_SEARCHING=true ./mvnw -B clean install -Djava.version=${JAVA_VERSION} -Dspotless.version=2.29.0
         else
           SPARK_HOME=`pwd` ./mvnw -B clean install -Djava.version=${JAVA_VERSION}
