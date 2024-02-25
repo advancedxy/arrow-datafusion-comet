@@ -51,6 +51,9 @@ runs:
           export DYLD_PRINT_SEARCHING=true
           export DYLD_PRINT_LIBRARIES=true
           echo "DYLD_FALLBACK_LIBRARY_PATH=${DYLD_FALLBACK_LIBRARY_PATH}"
+          # check SIP is enabled or not
+          echo "check dyld_xxx envs are loaded or not:"
+          sh -c "printenv" | grep -i dyld
           SPARK_HOME=`pwd` ./mvnw -B clean install -Djava.version=${JAVA_VERSION} -Dspotless.version=2.29.0
         else
           SPARK_HOME=`pwd` ./mvnw -B clean install -Djava.version=${JAVA_VERSION}
