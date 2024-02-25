@@ -52,9 +52,9 @@ runs:
         # install openssl and setup DYLD_LIBRARY_PATH to work with libcrypto.dylib loading issues with x86_64 mac runners
         # see PR https://github.com/apache/arrow-datafusion-comet/pull/55 for more details
         brew install openssl
-        OPENSSL_LIB_PATH=$(dirname `brew list openssl | grep 'lib/libcrypto.dylib'`)
+        OPENSSL_LIB_PATH=`brew --prefix openssl`/lib
         echo "openssl lib path is: ${OPENSSL_LIB_PATH}"
-        export DYLD_LIBRARY_PATH=$OPENSSL_LIB_PATH:$DYLD_LIBRARY_PATH
+        export DYLD_FALLBACK_LIBRARY_PATH=$OPENSSL_LIB_PATH:/usr/local/lib:/usr/lib
 
     - name: Install JDK ${{inputs.jdk-version}}
       uses: actions/setup-java@v4

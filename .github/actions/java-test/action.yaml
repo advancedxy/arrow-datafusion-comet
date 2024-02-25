@@ -48,7 +48,7 @@ runs:
       shell: bash
       run: |
         if [ $JAVA_VERSION == "1.8" ]; then
-          SPARK_HOME=`pwd` ./mvnw -B clean install -Djava.version=${JAVA_VERSION} -Dspotless.version=2.29.0
+          DYLD_PRINT_SEARCHING=true  DYLD_PRINT_LIBRARIES=true SPARK_HOME=`pwd` ./mvnw -B clean install -Djava.version=${JAVA_VERSION} -Dspotless.version=2.29.0
         else
           SPARK_HOME=`pwd` ./mvnw -B clean install -Djava.version=${JAVA_VERSION}
         fi
