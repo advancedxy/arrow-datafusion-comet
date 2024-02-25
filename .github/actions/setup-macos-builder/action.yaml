@@ -54,6 +54,7 @@ runs:
         brew install openssl
         OPENSSL_LIB_PATH=`brew --prefix openssl`/lib
         echo "openssl lib path is: ${OPENSSL_LIB_PATH}"
+        ls -alh /usr/local/lib
 
     - name: Install JDK ${{inputs.jdk-version}}
       uses: actions/setup-java@v4
