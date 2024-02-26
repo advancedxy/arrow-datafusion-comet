@@ -51,12 +51,11 @@ runs:
         export PATH=$PATH:$HOME/d/protoc/bin
         # install openssl and setup DYLD_LIBRARY_PATH to work with libcrypto.dylib loading issues with x86_64 mac runners
         # see PR https://github.com/apache/arrow-datafusion-comet/pull/55 for more details
-        brew install openssl bash
+        brew install openssl
         OPENSSL_LIB_PATH=`brew --prefix openssl`/lib
         echo "openssl lib path is: ${OPENSSL_LIB_PATH}"
-        ls -alh /usr/local/lib
-        # set bash as the default shell
-        echo "$(brew --prefix bash)/bin" >> $GITHUB_PATH
+        echo "DYLD_LIBRARY_PATH=${OPENSSL_LIB_PATH}" >> $GITHUB_ENV
+        csrutil status || true
 
     - name: Install JDK ${{inputs.jdk-version}}
       uses: actions/setup-java@v4
