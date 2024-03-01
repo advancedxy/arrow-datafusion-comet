@@ -40,9 +40,9 @@ on:
 
 jobs:
   linux-test:
-    if: ${{ input.os == 'ubuntu-latest' }}
-    name: ${{ input.test-target }} test on ${{ input.os }} with java ${{ input.java-version }} and spark-${{ input.spark-version }}
-    runs-on: ${{ input.os }}
+    if: ${{ inputs.os == 'ubuntu-latest' }}
+    name: ${{ inputs.test-target }} test on ${{ inputs.os }} with java ${{ inputs.java-version }} and spark-${{ inputs.spark-version }}
+    runs-on: ${{ inputs.os }}
     container:
       image: amd64/rust
     steps:
@@ -51,34 +51,34 @@ jobs:
         uses: ./.github/actions/setup-builder
         with:
           rust-version: ${{env.RUST_VERSION}}
-          jdk-version: ${{ input.java-version }}
-      - if: input.test-target == 'rust'
+          jdk-version: ${{ inputs.java-version }}
+      - if: inputs.test-target == 'rust'
         name: Rust test steps
         uses: ./.github/actions/rust-test
-      - if: input.test-target == 'java'
+      - if: inputs.test-target == 'java'
         name: Java test steps
         uses: ./.github/actions/java-test
         with:
-          MAVEN_OPTS: -Pspark-${{ input.spark-version }}
+          MAVEN_OPTS: -Pspark-${{ inputs.spark-version }}
 
   mac-test:
-    if: ${{ startsWith(input.os, 'macos-') }}
-    name: ${{ input.test-target }} test on ${{ input.os }} with java ${{ input.java-version }} and spark-${{ input.spark-version }}
-    runs-on: ${{ input.os }}
+    if: ${{ startsWith(inputs.os, 'macos-') }}
+    name: ${{ inputs.test-target }} test on ${{ inputs.os }} with java ${{ inputs.java-version }} and spark-${{ inputs.spark-version }}
+    runs-on: ${{ inputs.os }}
     steps:
       - uses: actions/checkout@v4
       - name: Setup Rust & Java toolchain for X86 Mac
-        if: ${{ input.os == 'macos-13' }}
+        if: ${{ inputs.os == 'macos-13' }}
         uses: ./.github/actions/setup-macos-builder
         with:
           rust-version: ${{env.RUST_VERSION}}
-          jdk-version: ${{ input.java-version }}
+          jdk-version: ${{ inputs.java-version }}
       - name: Setup Rust & Java toolchain for Apple Silicon Mac
-        if: ${{ input.os == 'macos-14' }}
+        if: ${{ inputs.os == 'macos-14' }}
         uses: ./.github/actions/setup-macos-builder
         with:
           rust-version: ${{env.RUST_VERSION}}
-          jdk-version: ${{ input.java_version }}
+          jdk-version: ${{ inputs.java_version }}
           jdk-architecture: aarch64
           protoc-architecture: aarch_64
       - if: matrix.test-target == 'rust'
