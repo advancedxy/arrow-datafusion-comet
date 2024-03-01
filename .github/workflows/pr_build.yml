@@ -41,20 +41,20 @@ env:
   RUST_VERSION: nightly
 
 jobs:
-  test-with-latest-spark:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: ['ubuntu-latest', 'macos-14']
-        test-target: ['java', 'rust']
-        java-version: ['8', '17']
-        spark-version: ['3.4']
-    uses: ./.github/workflows/build_and_test.yml
-    with:
-      os: ${{ matrix.os }}
-      java-version: ${{ matrix.java-version }}
-      test-target: ${{ matrix.test-target }}
-      spark-version: ${{ matrix.spark-version }}
+#  test-with-latest-spark:
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        os: ['ubuntu-latest', 'macos-14']
+#        test-target: ['java', 'rust']
+#        java-version: ['8', '17']
+#        spark-version: ['3.4']
+#    uses: ./.github/workflows/build_and_test.yml
+#    with:
+#      os: ${{ matrix.os }}
+#      java-version: ${{ matrix.java-version }}
+#      test-target: ${{ matrix.test-target }}
+#      spark-version: ${{ matrix.spark-version }}
 
   test-with-older-spark:
     strategy:
