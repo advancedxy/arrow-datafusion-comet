@@ -1,0 +1,90 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+name: "Build and Test"
+on:
+  workflow_call:
+    inputs:
+      os:
+        required: true
+        description: "Operating system to use for the build"
+        type: string
+      java-version:
+        default: '17'
+        required: required
+        description: "Java version to use for the build"
+        type: string
+      test-target:
+        required: true
+        description: "java or rust"
+        type: string
+      spark-version:
+        required: true
+        description: "Spark version to use for the build"
+        type: string
+
+jobs:
+  linux-test:
+    if: ${{ input.os == 'ubuntu-latest' }}
+    name: ${{ input.test-target }} test on ${{ input.os }} with java ${{ input.java-version }} and spark-${{ input.spark-version }}
+    runs-on: ${{ input.os }}
+    container:
+      image: amd64/rust
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Rust & Java toolchain
+        uses: ./.github/actions/setup-builder
+        with:
+          rust-version: ${{env.RUST_VERSION}}
+          jdk-version: ${{ input.java-version }}
+      - if: input.test-target == 'rust'
+        name: Rust test steps
+        uses: ./.github/actions/rust-test
+      - if: input.test-target == 'java'
+        name: Java test steps
+        uses: ./.github/actions/java-test
+        with:
+          MAVEN_OPTS: -Pspark-${{ input.spark-version }}
+
+  mac-test:
+    if: ${{ startsWith(input.os, 'macos-') }}
+    name: ${{ input.test-target }} test on ${{ input.os }} with java ${{ input.java-version }} and spark-${{ input.spark-version }}
+    runs-on: ${{ input.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Rust & Java toolchain for X86 Mac
+        if: ${{ input.os == 'macos-13' }}
+        uses: ./.github/actions/setup-macos-builder
+        with:
+          rust-version: ${{env.RUST_VERSION}}
+          jdk-version: ${{ input.java-version }}
+      - name: Setup Rust & Java toolchain for Apple Silicon Mac
+        if: ${{ input.os == 'macos-14' }}
+        uses: ./.github/actions/setup-macos-builder
+        with:
+          rust-version: ${{env.RUST_VERSION}}
+          jdk-version: ${{ input.java_version }}
+          jdk-architecture: aarch64
+          protoc-architecture: aarch_64
+      - if: matrix.test-target == 'rust'
+        name: Rust test steps
+        uses: ./.github/actions/rust-test
+      - if: matrix.test-target == 'java'
+        name: Java test steps
+        uses: ./.github/actions/java-test
+        with:
+          MAVEN_OPTS: -Pspark-${{ matrix.spark-version }}
