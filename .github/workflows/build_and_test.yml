@@ -37,6 +37,8 @@ on:
         required: true
         description: "Spark version to use for the build"
         type: string
+env:
+  RUST_VERSION: nightly
 
 jobs:
   linux-test:
