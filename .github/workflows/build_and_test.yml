@@ -26,7 +26,7 @@ on:
         type: string
       java-version:
         default: '17'
-        required: required
+        required: true
         description: "Java version to use for the build"
         type: string
       test-target:
