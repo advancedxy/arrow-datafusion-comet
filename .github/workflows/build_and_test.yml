@@ -83,10 +83,10 @@ jobs:
           jdk-version: ${{ inputs.java-version }}
           jdk-architecture: aarch64
           protoc-architecture: aarch_64
-      - if: matrix.test-target == 'rust'
+      - if: inputs.test-target == 'rust'
         name: Rust test steps
         uses: ./.github/actions/rust-test
-      - if: matrix.test-target == 'java'
+      - if: inputs.test-target == 'java'
         name: Java test steps
         uses: ./.github/actions/java-test
         with:
