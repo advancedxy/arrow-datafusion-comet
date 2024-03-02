@@ -84,6 +84,7 @@ jobs:
           - {os: 'macos-13', java-version: '11', spark-version: '3.4'}
           - {os: 'macos-13', java-version: '8', spark-version: '3.4'}
           - {os: 'macos-13', java-version: '17', spark-version: '3.4'}
+    if: github.event_name == 'push'
     uses: ./.github/workflows/build_and_test.yml
     with:
       os: ${{ matrix.os }}

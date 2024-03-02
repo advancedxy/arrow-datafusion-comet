@@ -80,7 +80,7 @@ jobs:
         uses: ./.github/actions/setup-macos-builder
         with:
           rust-version: ${{env.RUST_VERSION}}
-          jdk-version: ${{ inputs.java_version }}
+          jdk-version: ${{ inputs.java-version }}
           jdk-architecture: aarch64
           protoc-architecture: aarch_64
       - if: matrix.test-target == 'rust'
