@@ -63,9 +63,9 @@ jobs:
         os: ['ubuntu-latest', 'macos-14']
         test-target: ['java']
         pair:
-          - {java: '8', spark: '3.3'}
-          - {java: '8', spark: '3.2'}
-          - {java: '17', spark: '3.3'}
+          - {java-version: '8', spark: '3.3'}
+          - {java-version: '8', spark: '3.2'}
+          - {java-version: '17', spark: '3.3'}
     uses: ./.github/workflows/build_and_test.yml
     with:
       os: ${{ matrix.os }}
