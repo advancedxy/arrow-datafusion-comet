@@ -49,6 +49,7 @@ jobs:
         test-target: ['java', 'rust']
         java-version: ['8', '17']
         spark-version: ['3.4']
+    name: spark-3.4
     uses: ./.github/workflows/build_and_test.yml
     with:
       os: ${{ matrix.os }}
@@ -66,6 +67,7 @@ jobs:
           - {java-version: '8', spark: '3.3'}
           - {java-version: '8', spark: '3.2'}
           - {java-version: '17', spark: '3.3'}
+    name: spark-${{ matrix.pair.spark-version }}
     uses: ./.github/workflows/build_and_test.yml
     with:
       os: ${{ matrix.os }}
@@ -85,6 +87,7 @@ jobs:
           - {os: 'macos-13', java-version: '8', spark-version: '3.4'}
           - {os: 'macos-13', java-version: '17', spark-version: '3.4'}
     if: github.event_name == 'push'
+    name: post-commit
     uses: ./.github/workflows/build_and_test.yml
     with:
       os: ${{ matrix.os }}

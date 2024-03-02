@@ -43,7 +43,7 @@ env:
 jobs:
   linux-test:
     if: ${{ inputs.os == 'ubuntu-latest' }}
-    name: ${{ inputs.test-target }} test on ${{ inputs.os }} with java ${{ inputs.java-version }} and spark-${{ inputs.spark-version }}
+    name: (${{ input.os }} | ${{ inputs.java-version }}) | ${{ inputs.test-target }} | spark-${{ inputs.spark-version }})
     runs-on: ${{ inputs.os }}
     container:
       image: amd64/rust
@@ -65,7 +65,7 @@ jobs:
 
   mac-test:
     if: ${{ startsWith(inputs.os, 'macos-') }}
-    name: ${{ inputs.test-target }} test on ${{ inputs.os }} with java ${{ inputs.java-version }} and spark-${{ inputs.spark-version }}
+    name: (${{ input.os }} | ${{ inputs.java-version }}) | ${{ inputs.test-target }} | spark-${{ inputs.spark-version }})
     runs-on: ${{ inputs.os }}
     steps:
       - uses: actions/checkout@v4
