@@ -1118,7 +1118,7 @@ class CometExecSuite extends CometTestBase {
     })
   }
 
-  ignore("test RowToColumnar over RangeExec") {
+  test("test RowToColumnar over RangeExec") {
     // todo: after fixing arrow shading problem, re-enable this.
     // note: it can be launched directly from IDEs though.
     Seq("true", "false").foreach(aqe => {
