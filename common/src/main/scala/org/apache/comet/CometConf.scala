@@ -344,7 +344,7 @@ object CometConf {
       "Whether to enable row to columnar conversion for LeafExecNodes. When this is turned on, " +
         "Comet will convert row-based data to columnar format before processing.")
     .booleanConf
-    .createWithDefault(false)
+    .createWithDefault(true)
 }
 
 object ConfigHelpers {
