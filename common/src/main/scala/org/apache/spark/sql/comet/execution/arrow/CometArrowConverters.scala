@@ -33,6 +33,8 @@ import org.apache.spark.sql.vectorized.ColumnarBatch
 import org.apache.comet.vector.CometVector
 
 object CometArrowConverters extends Logging {
+  private val id = new java.util.concurrent.atomic.AtomicLong(0)
+
   // this is similar how Spark converts internal row to Arrow format except that we are transforming
   // the result batch to Comet's Internal ColumnarBatch instead of serialized bytes.
   private[sql] class ArrowBatchIterator(
@@ -52,17 +54,18 @@ object CometArrowConverters extends Logging {
     // comet code base
     private val allocator =
       ArrowUtils.rootAllocator.newChildAllocator(
-        s"to${this.getClass.getSimpleName}",
+        s"to${this.getClass.getSimpleName}-${id.getAndIncrement()}",
         0,
         Long.MaxValue)
 
     private val root = VectorSchemaRoot.create(arrowSchema, allocator)
     private val arrowWriter = ArrowWriter.create(root)
     private var columnarBatch: ColumnarBatch = null
+    private var closed: Boolean = false
 
     Option(context).foreach {
       _.addTaskCompletionListener[Unit] { _ =>
-        close()
+        close(true)
       }
     }
 
@@ -90,12 +93,22 @@ object CometArrowConverters extends Logging {
     }
 
     override def close(): Unit = {
-      if (columnarBatch != null) {
+      close(false)
+    }
+
+    def close(closeAllocator: Boolean): Unit = {
+      if (!closed) {
+        if (columnarBatch != null) {
+          columnarBatch.close()
+          columnarBatch = null
+        }
         arrowWriter.reset()
-        columnarBatch = null
+        closed = true
+        root.close()
       }
-      root.close()
-      allocator.close()
+      if (closeAllocator) {
+        allocator.close()
+      }
     }
   }
 
