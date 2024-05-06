@@ -50,13 +50,21 @@ case class StreamReader(channel: ReadableByteChannel, source: String) extends Au
   }
 
   override def close(): Unit = {
+    close(false)
+  }
+
+  def close(forceCloseAllocator: Boolean): Unit = {
     if (root != null) {
       arrowReader.close()
       root.close()
-      allocator.close()
 
       arrowReader = null
       root = null
+    }
+
+    // don't close the allocator unless it's empty or forced to.
+    if (allocator != null && (forceCloseAllocator || allocator.getAllocatedMemory == 0)) {
+      allocator.close()
       allocator = null
     }
   }

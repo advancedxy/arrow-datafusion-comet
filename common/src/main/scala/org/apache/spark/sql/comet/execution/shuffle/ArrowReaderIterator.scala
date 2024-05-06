@@ -67,12 +67,12 @@ class ArrowReaderIterator(channel: ReadableByteChannel, source: String)
     reader.nextBatch()
   }
 
-  def close(): Unit =
+  def close(forceCloseAllocator: Boolean): Unit =
     synchronized {
       if (currentBatch != null) {
         currentBatch.close()
         currentBatch = null
       }
-      reader.close()
+      reader.close(forceCloseAllocator)
     }
 }

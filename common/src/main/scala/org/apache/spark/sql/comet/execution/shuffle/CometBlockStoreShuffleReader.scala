@@ -32,6 +32,7 @@ import org.apache.spark.serializer.SerializerManager
 import org.apache.spark.shuffle.BaseShuffleHandle
 import org.apache.spark.shuffle.ShuffleReader
 import org.apache.spark.shuffle.ShuffleReadMetricsReporter
+import org.apache.spark.sql.vectorized.ColumnarBatch
 import org.apache.spark.storage.BlockId
 import org.apache.spark.storage.BlockManager
 import org.apache.spark.storage.BlockManagerId
@@ -98,19 +99,25 @@ class CometBlockStoreShuffleReader[K, C](
         // read iterators, it may blow up the call stack and cause OOM.
         context.addTaskCompletionListener[Unit] { _ =>
           if (currentReadIterator != null) {
-            currentReadIterator.close()
+            currentReadIterator.close(true)
           }
         }
 
-        IpcInputStreamIterator(inputStream, decompressingNeeded = true, context)
+        // accumulated readers/allocator to be closed after the input stream is consumed
+        val accumulatedReaders = new scala.collection.mutable.ArrayBuffer[ArrowReaderIterator]()
+        val iter = IpcInputStreamIterator(inputStream, decompressingNeeded = true, context)
           .flatMap { channel =>
             if (currentReadIterator != null) {
               // Closes previous read iterator.
-              currentReadIterator.close()
+              currentReadIterator.close(false)
+              accumulatedReaders.append(currentReadIterator)
             }
             currentReadIterator = new ArrowReaderIterator(channel, this.getClass.getSimpleName)
             currentReadIterator.map((0, _)) // use 0 as key since it's not used
           }
+        CompletionIterator[(Int, ColumnarBatch), Iterator[(Int, ColumnarBatch)]](
+          iter,
+          accumulatedReaders.foreach(_.close(true)))
       }
 
     // Update the context task metrics for each record read.
